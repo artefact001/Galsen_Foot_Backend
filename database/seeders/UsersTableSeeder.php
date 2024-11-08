@@ -1,0 +1,65 @@
+<?php  
+
+namespace Database\Seeders;  
+
+use App\Models\User;  
+use Spatie\Permission\Models\Role;  
+use Illuminate\Database\Seeder;  
+use Illuminate\Support\Facades\Hash;  
+
+class UsersTableSeeder extends Seeder  
+{  
+    public function run(): void  
+    {  
+        // Création des rôles  
+        $roles = ['admin', 'zone', 'equipe', 'joueur'];  
+
+        // Assurez-vous que les rôles existent dans la base de données  
+        foreach ($roles as $roleName) {  
+            // Role::firstOrCreate(['name' => $roleName]);  
+        }  
+
+        // Création des utilisateurs avec les rôles correspondants  
+        $users = [  
+            [  
+                'nom' => 'Cheikh Tidiane Sane',  
+                'email' => 'Cheikhsane656@gmail.com',  
+                'password' => Hash::make('password'),  
+                'role' => 'admin',  
+            ],  
+            [  
+                'nom' => 'Souleymane',  
+                'email' => 'souleymane9700@gmail.com',  
+                'password' => Hash::make('password'),  
+                'role' => 'zone',  
+            ],  
+            [  
+                'nom' => 'Barro Amadou',  
+                'email' => 'equipe@gmail.com',  
+                'password' => Hash::make('password'),  
+                'role' => 'equipe',  
+            ],  
+            [  
+                'nom' => 'Player User',  
+                'email' => 'joueur@example.com',  
+                'password' => Hash::make('password'),  
+                // 'role' => 'Equipe',  
+            ],  
+        ];  
+
+        foreach ($users as $userData) {  
+            $user = User::firstOrCreate(  
+                ['email' => $userData['email']],  
+                ['nom' => $userData['nom'], 'password' => $userData['password']]  
+            );  
+
+            // Récupérer le rôle correspondant au nom spécifié dans la base de données  
+            // $role = Role::where('name', $userData['role'])->first();  
+
+            // Si le rôle existe, on l'assigne à l'utilisateur créé  
+            if ($role) {  
+                $user->assignRole($role);  
+            }  
+        }  
+    }  
+}

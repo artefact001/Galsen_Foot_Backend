@@ -8,7 +8,7 @@ use App\Models\Matche;
 use App\Models\Competition;
 use Carbon\Carbon;
 
-class MatchesTableSeeder extends Seeder
+class MatcheSeeder extends Seeder
 {
     /**
      * Run the database seeds.

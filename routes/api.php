@@ -63,7 +63,22 @@ Route::group(['prefix' => 'auth'], function () {
 */
 // Route::group(['middleware' => 'auth:api'], function () {
     // Competitions
-    Route::apiResource('competitions', CompetitionController::class);
+    // Route::apiResource('competitions', CompetitionController::class);
+    
+    
+    // use App\Http\Controllers\CompetitionController;
+
+// Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/competitions', [CompetitionController::class, 'index']);
+    Route::get('/competitions/{id}', [CompetitionController::class, 'show']);
+    Route::post('/competitions', [CompetitionController::class, 'store']);
+    Route::put('/competitions/{id}', [CompetitionController::class, 'update']);
+    Route::delete('/competitions/{id}', [CompetitionController::class, 'destroy']);
+    Route::get('/competitions/{competitionId}/teams/{equipeId}', [CompetitionController::class, 'checkEquipeInCompetition']);
+// });
+
+    
+    
     
     // Matches
     Route::apiResource('matches', MatcheController::class);

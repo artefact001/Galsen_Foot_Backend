@@ -12,6 +12,7 @@ class CompetitionService
      *
      * @param array $data Les données de la nouvelle compétition
      * @return Competition
+     * @throws \Exception
      */
     public function creerCompetition(array $data): Competition
     {
@@ -29,6 +30,7 @@ class CompetitionService
      * @param Competition $competition La compétition à mettre à jour
      * @param array $data Les nouvelles données
      * @return Competition
+     * @throws \Exception
      */
     public function mettreAJourCompetition(Competition $competition, array $data): Competition
     {
@@ -46,6 +48,7 @@ class CompetitionService
      *
      * @param Competition $competition La compétition à supprimer
      * @return void
+     * @throws \Exception
      */
     public function supprimerCompetition(Competition $competition): void
     {
@@ -62,6 +65,7 @@ class CompetitionService
      *
      * @param int $id L'identifiant de la compétition
      * @return Competition
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function recupererCompetitionParId(int $id): Competition
     {

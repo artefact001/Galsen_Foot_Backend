@@ -51,7 +51,7 @@
 
         //         if ($user) {
         //             Zone::create([
-        //             'nom' => $request->nom_equipe,
+        //             'nom' => $request->nom_zone,
         //             'localite' => $request->localite,
         //             'user_id' => $request->$user->id,
         //             ]);
@@ -90,60 +90,60 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Professeur;
+use App\Models\zone;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
-use App\Mail\ProfesseurCreated;
+use App\Mail\zoneCreated;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Requests\StoreProfesseurRequest;
-use App\Http\Requests\UpdateProfesseurRequest;
+use App\Http\Requests\StorezoneRequest;
+use App\Http\Requests\UpdatezoneRequest;
 use Illuminate\Support\Str;
 
 
-class ProfesseurController extends Controller
+class zoneController extends Controller
 {
 
-    //nombre total de professeur
-    public function totalProfesseurs()
+    //nombre total de zone
+    public function totalzones()
     {
 
         // Compter le nombre total de prof 
-        $totalProsseur = Professeur::count();
+        $totalzone = zone::count();
 
         // Structurer la réponse en JSON
         return response()->json([
-            'message' => 'Total d\'élèves pour l\'année en cours.',
-            'total' => $totalProsseur,
+            'message' => 'Total d\'equipe pour l\'année en cours.',
+            'total' => $totalzone,
             'status' => 200
         ]);
     }
     /**
-     * Afficher la liste des professeurs
+     * Afficher la liste des zones
      */
     public function index()
     {
-        // Récupérer tous les professeurs avec leurs emails (s'ils sont dans une relation avec 'users' par exemple)
-        $professeurs = Professeur::with('user')->get(); // Suppose que la relation 'user' existe dans le modèle Professeur
+        // Récupérer tous les zones avec leurs emails (s'ils sont dans une relation avec 'users' par exemple)
+        $zones = zone::with('user')->get(); // Suppose que la relation 'user' existe dans le modèle zone
 
         // Transformer les données pour inclure les emails
-        $resultat = $professeurs->map(function ($professeur) {
+        $resultat = $zones->map(function ($zone) {
             return [
-                'id' => $professeur->id,
-                'nom' => $professeur->nom,
-                'prenom' => $professeur->prenom,
-                'telephone' => $professeur->telephone,
-                'matricule' => $professeur->matricule,
-                'email' => $professeur->user->email,
-                'user_id' => $professeur->user->id,
+                'id' => $zone->id,
+                'nom' => $zone->nom,
+                'prenom' => $zone->prenom,
+                'telephone' => $zone->telephone,
+                'matricule' => $zone->matricule,
+                'email' => $zone->user->email,
+                'user_id' => $zone->user->id,
             ];
         });
 
         return response()->json([
-            'message' => 'Liste des professeurs',
+            'message' => 'Liste des zones',
             'données' => $resultat,
             'status' => 200
         ]);
@@ -153,34 +153,26 @@ class ProfesseurController extends Controller
 
 
     /**
-     * Methode pour ajouter un professeur
+     * Methode pour ajouter un zone
      */
-    public function store(StoreProfesseurRequest $request)
+    public function store(StorezoneRequest $request)
     {
 
         // Générer un mot de passe aléatoire de 10 caractères
-        $password = Str::random(10);
+        $password = Str::random(8);
 
         // Créer un nouvel utilisateur
         $user = User::create([
             'email' => $request->email,
             'password' => bcrypt($password),
         ]);
-        // Assigner le rôle "professeur" à l'utilisateur (en supposant que le rôle existe dans la base de données)
-        $user->assignRole('professeur');
+        // Assigner le rôle "zone" à l'utilisateur (en supposant que le rôle existe dans la base de données)
+        $user->assignRole('zone');
 
-        // Générer une matricule unique
-        $prenom = strtoupper(substr($request->prenom, 0, 2)); // Prendre les deux premières lettres du prénom en majuscules
-        $matricule = 'P' . $prenom . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT); // Générer trois chiffres aléatoires
+   
 
-        // S'assurer que la matricule est unique
-        while (Professeur::where('matricule', $matricule)->exists()) {
-            // Régénérer une nouvelle matricule si elle existe déjà
-            $matricule = 'P' . $prenom . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
-        }
-
-        // Ajouter le professeur à la table des professeurs
-        $professeur = Professeur::create([
+        // Ajouter le zone à la table des zones
+        $zone = zone::create([
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'matricule' => $matricule,
@@ -188,48 +180,48 @@ class ProfesseurController extends Controller
             'photo' => $request->hasFile('photo') ? $request->photo->store('photos') : null,
             'user_id' => $user->id, // ID de l'utilisateur créé
         ]);
-        // Envoyer un email au professeur
-        Mail::to($request->email)->send(new ProfesseurCreated($professeur, $password));
+        // Envoyer un email au zone
+        Mail::to($request->email)->send(new zoneCreated($zone, $password));
 
         return response()->json([
-            'message' => 'Professeur créé avec succès',
-            'données' => $professeur,
+            'message' => 'zone créé avec succès',
+            'données' => $zone,
             'status' => 201
         ]);
     }
 
 
     /**
-     *voir les details d'un professeur
+     *voir les details d'un zone
      */
-    public function show(Professeur $professeur)
+    public function show(zone $zone)
     {
         return response()->json([
-            'message' => 'Détails du professeur',
-            'données' => $professeur,
+            'message' => 'Détails du zone',
+            'données' => $zone,
             'status' => 200
         ]);
     }
 
 
     /**
-     * ;ethode pour supprimer un professeur
+     * ;ethode pour supprimer un zone
      */
 
     public function update(Request $request, $id)
     {
-        // Récupérer le professeur par ID
-        $professeur = Professeur::find($id);
+        // Récupérer le zone par ID
+        $zone = zone::find($id);
 
-        if (!$professeur) {
+        if (!$zone) {
             return response()->json([
-                'message' => 'Professeur non trouvé',
+                'message' => 'zone non trouvé',
                 'status' => 404
             ]);
         }
 
-        // Récupérer l'utilisateur associé au professeur
-        $user = User::find($professeur->user_id);
+        // Récupérer l'utilisateur associé au zone
+        $user = User::find($zone->user_id);
 
         if (!$user) {
             return response()->json([
@@ -240,22 +232,22 @@ class ProfesseurController extends Controller
 
         Log::info('Données envoyées pour la mise à jour:', $request->all());
 
-        // Mettre à jour les données du professeur
-        $professeur->nom = $request->input('nom', $professeur->nom);
-        $professeur->prenom = $request->input('prenom', $professeur->prenom);
-        $professeur->telephone = $request->input('telephone', $professeur->telephone);
+        // Mettre à jour les données du zone
+        $zone->nom = $request->input('nom', $zone->nom);
+        $zone->prenom = $request->input('prenom', $zone->prenom);
+        $zone->telephone = $request->input('telephone', $zone->telephone);
 
         // Vérifier si une nouvelle image a été uploadée
         if ($request->hasFile('photo')) {
             // Supprimer l'ancienne photo
-            if ($professeur->photo) {
-                Storage::disk('public')->delete($professeur->photo);
+            if ($zone->photo) {
+                Storage::disk('public')->delete($zone->photo);
             }
 
             // Stocker la nouvelle photo
             $photoPath = $request->file('photo')->store('photos', 'public');
 
-            $professeur->photo = $photoPath; // Stocke le chemin relatif de l'image
+            $zone->photo = $photoPath; // Stocke le chemin relatif de l'image
         }
         // Mettre à jour les données de l'utilisateur
         if ($request->has('email')) {
@@ -267,35 +259,35 @@ class ProfesseurController extends Controller
         }
 
         // Sauvegarder les modifications
-        $professeur->save();
+        $zone->save();
         $user->save();
 
         return response()->json([
-            'message' => 'Professeur et utilisateur modifiés avec succès',
-            'données' => $professeur,
+            'message' => 'zone et utilisateur modifiés avec succès',
+            'données' => $zone,
             'status' => 200
         ]);
     }
 
 
     /**
-     * Supprimer un professeur
+     * Supprimer un zone
      */
-    public function destroy(Professeur $professeur)
+    public function destroy(zone $zone)
     {
         // Supprimer l'utilisateur associé
-        if ($professeur->user_id) {
-            $user = User::find($professeur->user_id);
+        if ($zone->user_id) {
+            $user = User::find($zone->user_id);
             if ($user) {
                 $user->delete();
             }
         }
 
-        // Supprimer le professeur
-        $professeur->delete();
+        // Supprimer le zone
+        $zone->delete();
 
         return response()->json([
-            'message' => 'Professeur et utilisateur supprimés avec succès',
+            'message' => 'zone et utilisateur supprimés avec succès',
             'status' => 200
         ]);
     }

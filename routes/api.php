@@ -25,7 +25,8 @@ use App\Http\Controllers\{
     StatistiqueController,
     ArticleController,
     CommentaireController,
-    CategorieController
+    CategorieController,
+    ZoneController
 };
 
 /*
@@ -51,8 +52,6 @@ Route::group(['prefix' => 'auth'], function () {
     // Users
     Route::apiResource('users', UserController::class);
     
-        Route::apiResource('zones', ZoneController::class);
-
     // Roles and Permissions
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
@@ -65,22 +64,8 @@ Route::group(['prefix' => 'auth'], function () {
 */
 // Route::group(['middleware' => 'auth:api'], function () {
     // Competitions
-    // Route::apiResource('competitions', CompetitionController::class);
-    
-    
-    // use App\Http\Controllers\CompetitionController;
-
-// Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/competitions', [CompetitionController::class, 'index']);
-    Route::get('/competitions/{id}', [CompetitionController::class, 'show']);
-    Route::post('/competitions', [CompetitionController::class, 'store']);
-    Route::put('/competitions/{id}', [CompetitionController::class, 'update']);
-    Route::delete('/competitions/{id}', [CompetitionController::class, 'destroy']);
-    Route::get('/competitions/{competitionId}/teams/{equipeId}', [CompetitionController::class, 'checkEquipeInCompetition']);
-// });
-
-    
-    
+    Route::apiResource('competitions', CompetitionController::class);
+    Route::apiResource('zones', ZoneController::class);
     
     // Matches
     Route::apiResource('matches', MatcheController::class);

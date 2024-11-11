@@ -52,7 +52,8 @@ class EquipeController extends Controller
  
  
             // Create the user with the password
-            $password = $request . Str::random(8); // Example: "prenomXYZ"
+            $password = $request->nom . Str::random(8); // Example: "prenomXYZ"
+            $password = $request->password;
             $user = User::create([
                 'nom' => $request->nom,
                 'email' => $request->email,
@@ -63,7 +64,7 @@ class EquipeController extends Controller
  
                  if ($user) {
                      Equipe::create([
-                     'nom' => $request->nom_zone,
+                     'nom' => $request->nom_equipe,
                      'logo' => $request->logo,
                      'date_creer' => $request->date_creer,
                      'user_id' => $user->id,

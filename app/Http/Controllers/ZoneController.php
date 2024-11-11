@@ -43,7 +43,10 @@ class ZoneController extends Controller
 
 
            // Create the user with the password
-           $password = $request . Str::random(8); // Example: "prenomXYZ"
+        //    $password = $request->nom . Str::random(4); // Example: "prenomXYZ"
+
+           $password = $request->password; // Example: "prenomXYZ"
+
            $user = User::create([
                'nom' => $request->nom,
                'email' => $request->email,

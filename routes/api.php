@@ -25,7 +25,8 @@ use App\Http\Controllers\{
     StatistiqueController,
     ArticleController,
     CommentaireController,
-    CategorieController
+    CategorieController,
+    ZoneController
 };
 
 /*
@@ -64,6 +65,7 @@ Route::group(['prefix' => 'auth'], function () {
 // Route::group(['middleware' => 'auth:api'], function () {
     // Competitions
     Route::apiResource('competitions', CompetitionController::class);
+    Route::apiResource('zones', ZoneController::class);
     
     // Matches
     Route::apiResource('matches', MatcheController::class);

@@ -14,6 +14,77 @@ use App\Http\Requests\ValidationRequest;
 
 class ZoneController extends Controller
 {
+
+    //index Zone
+
+    public function index()
+    {
+        // liste zone
+        $zones = Zone::all();
+        return response()->json([
+            'success' => true,
+            'data' => $zones,
+            'message' => 'success',
+        ], 200);
+    }
+
+
+    public function store(Request $request)
+   {
+    
+     
+
+       try {
+           // Handle profile picture upload
+           $photo_profile = null;
+           if ($request->hasFile('photo_profile')) {
+               $photo_profile = $request->file('photo_profile')->store('profiles', 'public');
+           }
+
+
+           // Create the user with the password
+           $password = $request . Str::random(8); // Example: "prenomXYZ"
+           $user = User::create([
+               'nom' => $request->nom,
+               'email' => $request->email,
+               'password' => Hash::make($password), // Encrypt the password
+               'role'  => 'zone',
+               'photo_profile' => $photo_profile, // Store the photo path if available
+           ]);
+
+                if ($user) {
+                    Zone::create([
+                    'nom' => $request->nom_zone,
+                    'localite' => $request->localite,
+                    'user_id' => $user->id,
+                    ]);
+                    }
+
+
+
+           // Assign role and promotion if necessary
+        //    $role = Role::firstOrCreate(['name' => 'admin']);
+        //    $user->assignRole($role);
+
+
+
+           // Send email notification
+        //    $user->notify(new ZoneInscriptionNotification($user, $password));
+
+
+           return response()->json([
+               'success' => true,
+               'message' => 'Zone inscrit avec succès et notification envoyée par email',
+               'user' => $user
+           ], 201);
+       } catch (\Exception $e) {
+           return response()->json([
+               'success' => false,
+               'message' => 'Une erreur est survenue : ' . $e->getMessage()
+           ], 500);
+       }
+   }
+
 public function inscrireZone(Request $request)
    {
        // Validation des données
@@ -67,7 +138,7 @@ public function inscrireZone(Request $request)
 
 
            // Send email notification
-           $user->notify(new ZoneInscriptionNotification($user, $password));
+        //    $user->notify(new ZoneInscriptionNotification($user, $password));
 
 
            return response()->json([
@@ -82,4 +153,6 @@ public function inscrireZone(Request $request)
            ], 500);
        }
    }
+
+
 }

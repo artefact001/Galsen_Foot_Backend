@@ -13,21 +13,35 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
+        // Validation des données
+        $validator = validator($request->all(), [
+            'email' => ['required', 'email', 'string'],
+            'password' => ['required', 'string'],
         ]);
 
-        $credentials = $request->only('email', 'password');
-
-        if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
-        $user = Auth::user();
+        $credentials = $request->only(['email', 'password']);
 
+        // Tentative de connexion avec les informations d'identification
+        if (!$token = auth()->guard('api')->attempt($credentials)) {
+            return response()->json([
+                'message' => 'Identifiants de connexion invalides',
+            ], 401);
+        }
+        // Obtenez les rôles de l'utilisateur
+        $user = auth()->guard('api')->user();
 
-             return response()->json(['token' => $token, 'user' => $user], 200);
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'user' => auth()->guard('api')->user(),
+            'expires_in' => auth()->guard('api')->factory()->getTTL() * 60, // Expiration du token en secondes
+        ]);
     }
 
     // public function register(Request $request)

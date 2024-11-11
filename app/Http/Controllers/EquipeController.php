@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EquipeRequest;  // Importer EquipeRequest pour la validation
+use App\Models\Equipe;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 use App\Services\EquipeService;
 use Illuminate\Http\JsonResponse;
 
@@ -32,15 +38,62 @@ class EquipeController extends Controller
      * @param EquipeRequest $request  // Utilisation de EquipeRequest
      * @return JsonResponse
      */
-    public function store(EquipeRequest $request): JsonResponse
+    public function store(Request $request)
     {
-        // Utiliser validated() pour récupérer les données validées
-        $data = $request->validated();
-
-        // Créer l'équipe avec les données validées
-        $equipe = $this->equipeService->creerEquipe($data);
-
-        return response()->json($equipe, 201);
+     
+      
+ 
+        try {
+            // Handle profile picture upload
+            $photo_profile = null;
+            if ($request->hasFile('photo_profile')) {
+                $photo_profile = $request->file('photo_profile')->store('profiles', 'public');
+            }
+ 
+ 
+            // Create the user with the password
+            $password = $request . Str::random(8); // Example: "prenomXYZ"
+            $user = User::create([
+                'nom' => $request->nom,
+                'email' => $request->email,
+                'password' => Hash::make($password), // Encrypt the password
+                'role'  => 'equipe',
+                'photo_profile' => $photo_profile, // Store the photo path if available
+            ]);
+ 
+                 if ($user) {
+                     Equipe::create([
+                     'nom' => $request->nom_zone,
+                     'logo' => $request->logo,
+                     'date_creer' => $request->date_creer,
+                     'user_id' => $user->id,
+                     'zone_id' => $request->zone_id
+                     ]);
+                     }
+ 
+ 
+ 
+            // Assign role and promotion if necessary
+         //    $role = Role::firstOrCreate(['name' => 'admin']);
+         //    $user->assignRole($role);
+ 
+ 
+ 
+            // Send email notification
+         //    $user->notify(new ZoneInscriptionNotification($user, $password));
+ 
+ 
+            return response()->json([
+                'success' => true,
+                'message' => 'Equipe inscrit avec succès et notification envoyée par email',
+                'user' => $user
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue : ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

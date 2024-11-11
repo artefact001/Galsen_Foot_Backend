@@ -51,6 +51,8 @@ Route::group(['prefix' => 'auth'], function () {
     // Users
     Route::apiResource('users', UserController::class);
     
+        Route::apiResource('zones', ZoneController::class);
+
     // Roles and Permissions
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);

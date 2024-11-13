@@ -14,17 +14,15 @@ class DatabaseSeeder extends Seeder
             ZoneSeeder::class,
             EquipeSeeder::class,
             CategorieSeeder::class,
-            // EvenementSeeder::class,
             CompetitionSeeder::class,
             JoueurSeeder::class,
-            TirageSeeder::class,
-            // MatcheSeeder::class,
-            // ReclamationSeeder::class,
-            // StatistiqueJoueurSeeder::class,
-            // ClassementsSeeder::class,
+            MatcheSeeder::class,
+            ReclamationsSeeder::class,
+            StatistiqueJoueurSeeder::class,
+            ClassementsSeeder::class,
             // PointsSeeder::class,
-            // HistoriqueJoueurEquipeSeeder::class,
-            // StatistiqueJoueurSeeder::class,
+            HistoriqueJoueurEquipeSeeder::class,
+            StatistiqueJoueurSeeder::class,
             
             
         ]);

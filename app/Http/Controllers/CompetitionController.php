@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CompetitionRequest;
 use App\Models\Competition;
 use App\Services\CompetitionService;
 use Illuminate\Http\JsonResponse;
-// use Illuminate\Http\Request;
 
 class CompetitionController extends Controller
 {
@@ -36,7 +34,12 @@ class CompetitionController extends Controller
      */
     public function store(CompetitionRequest $request): JsonResponse
     {
-        $competition = $this->competitionService->creerCompetition($request->validated());
+    
+
+        $competition = $this->competitionService->creerCompetition($request->all());
+        
+            // Log::error('Custom error message', ['data' => $request->all()]);
+
         return response()->json($competition, 201);
     }
 
@@ -88,6 +91,24 @@ class CompetitionController extends Controller
             return response()->json(null, 204);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Competition not found'], 404);
+        }
+    }
+
+    /**
+     * Vérifier si une équipe est inscrite à une compétition.
+     *
+     * @param int $competitionId
+     * @param int $teamId
+     * @return JsonResponse
+     */
+    public function isEquipeInCompetition(int $competitionId, int $teamId): JsonResponse
+    {
+        $isInCompetition = $this->competitionService->estEquipeDansCompetition($competitionId, $teamId);
+
+        if ($isInCompetition) {
+            return response()->json(['isInCompetition' => true], 200);
+        } else {
+            return response()->json(['isInCompetition' => false], 200);
         }
     }
 }

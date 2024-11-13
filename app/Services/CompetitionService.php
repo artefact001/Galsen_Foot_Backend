@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\Competition;
@@ -7,31 +6,30 @@ use Illuminate\Support\Facades\Log;
 
 class CompetitionService
 {
-    /**
-     * Créer une nouvelle compétition.
-     *
-     * @param array $data Les données de la nouvelle compétition
-     * @return Competition
-     * @throws \Exception
-     */
+    // Check if a team is registered in a competition
+    public function estEquipeDansCompetition(int $competitionId, int $equipeId): bool
+    {
+        try {
+            $competition = Competition::findOrFail($competitionId);
+            return $competition->teams()->where('equipe_id', $equipeId)->exists();
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la vérification de l\'inscription de l\'équipe : ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Create a new competition
     public function creerCompetition(array $data): Competition
     {
         try {
             return Competition::create($data);
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la création d\'une compétition : ' . $e->getMessage());
-            throw new \Exception('Erreur lors de la création de la compétition.');
+            Log::error('Erreur lors de la création de la compétition : ' . $e->getMessage());
+            throw new \Exception('Erreur lors de la création de la compétition. Détails : ' . $e->getMessage(), 500);
         }
     }
 
-    /**
-     * Mettre à jour une compétition existante.
-     *
-     * @param Competition $competition La compétition à mettre à jour
-     * @param array $data Les nouvelles données
-     * @return Competition
-     * @throws \Exception
-     */
+    // Update an existing competition
     public function mettreAJourCompetition(Competition $competition, array $data): Competition
     {
         try {
@@ -43,13 +41,7 @@ class CompetitionService
         }
     }
 
-    /**
-     * Supprimer une compétition.
-     *
-     * @param Competition $competition La compétition à supprimer
-     * @return void
-     * @throws \Exception
-     */
+    // Delete a competition
     public function supprimerCompetition(Competition $competition): void
     {
         try {
@@ -60,23 +52,13 @@ class CompetitionService
         }
     }
 
-    /**
-     * Récupérer une compétition par son identifiant.
-     *
-     * @param int $id L'identifiant de la compétition
-     * @return Competition
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
+    // Get a competition by its ID
     public function recupererCompetitionParId(int $id): Competition
     {
         return Competition::findOrFail($id);
     }
 
-    /**
-     * Récupérer toutes les compétitions.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
+    // Get all competitions
     public function recupererToutesLesCompetitions(): \Illuminate\Database\Eloquent\Collection
     {
         return Competition::all();

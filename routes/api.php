@@ -17,7 +17,6 @@ use App\Http\Controllers\{
     TirageController,
     ReclamationController,
     NotificationController,
-    // ResultatController,
     ClassementController,
     PointController,
     CalendrierController,
@@ -26,7 +25,9 @@ use App\Http\Controllers\{
     ArticleController,
     CommentaireController,
     CategorieController,
-    ZoneController
+    ZoneController,
+    GalerieController
+
 };
 
 /*
@@ -57,6 +58,13 @@ Route::group(['prefix' => 'auth'], function () {
     Route::apiResource('permissions', PermissionController::class);
 // });
 
+
+
+
+Route::apiResource('galeries', GalerieController::class);
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Competition Management Routes
@@ -65,19 +73,13 @@ Route::group(['prefix' => 'auth'], function () {
 // Route::group(['middleware' => 'auth:api'], function () {
     // Competitions
     Route::apiResource('competitions', CompetitionController::class);
+    Route::get('/competitions/{competitionId}/equipes/{equipesId}', [CompetitionController::class, 'isEquipeInCompetition']);
+
     Route::apiResource('zones', ZoneController::class);
     
     // Matches
     Route::apiResource('matches', MatcheController::class);
     
-    // // Results
-    // Route::group(['prefix' => 'resultats'], function () {
-    //     Route::post('/', [ResultatController::class, 'store']);
-    //     Route::get('/matche/{matcheId}', [ResultatController::class, 'show']);
-    //     Route::post('/matche/{matcheId}/winner', [ResultatController::class, 'determineWinner']);
-    // });
-// });
-
 /*
 |--------------------------------------------------------------------------
 | Team and Player Management Routes

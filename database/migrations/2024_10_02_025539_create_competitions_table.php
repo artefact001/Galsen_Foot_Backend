@@ -17,7 +17,7 @@ class CreateCompetitionsTable extends Migration
             $table->string('nom');  // Nom de la compétition
             $table->date('date_debut');  // Date de début de la compétition
             $table->date('date_fin');  // Date de fin de la compétition
-            $table->string('lieux');  // Lieu de la compétition
+             $table->string('lieux')->default('Dakar'); // Assurez-vous de définir une valeur par défaut
             $table->timestamps();  // Dates de création et de mise à jour
         });
 

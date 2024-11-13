@@ -3,41 +3,43 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Joueur;
+use App\Models\Equipe;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class HistoriqueJoueurEquipeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run()
     {
-        DB::table('historique_joueur_equipe')->insert([
-            [
-                'joueur_id' => 1,  // Assurez-vous que le joueur 1 existe dans la table 'joueurs'
-                'equipe_id' => 1,  // Assurez-vous que l'équipe 1 existe dans la table 'equipes'
-                'date_debut' => '2023-01-15',  // Date de début d'affiliation
-                'date_fin' => null,  // Actuellement actif
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'joueur_id' => 2,  // Joueur 2
-                'equipe_id' => 1,  // Équipe 1
-                'date_debut' => '2023-02-10',
-                'date_fin' => null,  // Actuellement actif
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'joueur_id' => 1,  // Joueur 1
-                'equipe_id' => 2,  // Équipe 2
-                'date_debut' => '2024-05-01',
-                'date_fin' => '2024-08-01',  // Ancienne affiliation
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        // Récupérer tous les joueurs et équipes existants
+        $joueurs = Joueur::all();
+        $equipes = Equipe::all();
+
+        // Générer 50 enregistrements d'historique
+        for ($i = 0; $i < 50; $i++) {
+            // Sélectionner un joueur et une équipe aléatoires
+            $joueur = $joueurs->random();
+            $equipe = $equipes->random();
+
+            // Générer une date de début aléatoire
+            $dateDebut = Carbon::now()->subYears(rand(1, 5))->subMonths(rand(1, 12));
             
-        ]);
+            // Générer une date de fin aléatoire (parfois nul pour signifier l'affiliation actuelle)
+            $dateFin = rand(0, 1) ? $dateDebut->copy()->addMonths(rand(6, 24)) : null;
+
+            // Insérer l'enregistrement dans la table
+            DB::table('historique_joueur_equipe')->insert([
+                'joueur_id' => $joueur->id,
+                'equipe_id' => $equipe->id,
+                'date_debut' => $dateDebut,
+                'date_fin' => $dateFin,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

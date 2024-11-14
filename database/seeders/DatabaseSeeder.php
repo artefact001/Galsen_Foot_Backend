@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ReclamationsSeeder::class,
             StatistiqueJoueurSeeder::class,
             ClassementsSeeder::class,
+            ArticleSeeder::class,
             // PointsSeeder::class,
             HistoriqueJoueurEquipeSeeder::class,
             StatistiqueJoueurSeeder::class,

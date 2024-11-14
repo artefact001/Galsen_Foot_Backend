@@ -58,6 +58,10 @@ class CompetitionService
         return Competition::findOrFail($id);
     }
 
+
+
+
+
     // Get all competitions
     public function recupererToutesLesCompetitions(): \Illuminate\Database\Eloquent\Collection
     {

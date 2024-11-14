@@ -93,6 +93,26 @@ class CompetitionController extends Controller
             return response()->json(['error' => 'Competition not found'], 404);
         }
     }
+    
+    
+    /**
+ * Afficher les détails d'une compétition spécifique.
+ *
+ * @param int $id
+ * @return JsonResponse
+ */
+public function showDetails(int $id): JsonResponse
+{
+    try {
+        $competition = $this->competitionService->recupererCompetitionParId($id);
+        return response()->json($competition, 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Compétition non trouvée'], 404);
+    }
+}
+
+    
+    
 
     /**
      * Vérifier si une équipe est inscrite à une compétition.

@@ -74,6 +74,8 @@ Route::apiResource('galeries', GalerieController::class);
     // Competitions
     Route::apiResource('competitions', CompetitionController::class);
     Route::get('/competitions/{competitionId}/equipes/{equipesId}', [CompetitionController::class, 'isEquipeInCompetition']);
+Route::get('competitions/{id}', [CompetitionController::class, 'showDetails']);
+
 
     Route::apiResource('zones', ZoneController::class);
     
@@ -126,6 +128,7 @@ Route::apiResource('galeries', GalerieController::class);
     Route::apiResource('articles', ArticleController::class);
     Route::post('articles/{articleId}/commentaires', [CommentaireController::class, 'store']);
     Route::delete('commentaires/{id}', [CommentaireController::class, 'destroy']);
+
     
     // Categories
     Route::apiResource('categories', CategorieController::class);

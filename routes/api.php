@@ -52,7 +52,7 @@ Route::group(['prefix' => 'auth'], function () {
 // Route::group(['middleware' => 'auth:api'], function () {
     // Users
     Route::apiResource('users', UserController::class);
-    
+
     // Roles and Permissions
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
@@ -78,22 +78,22 @@ Route::get('competitions/{id}', [CompetitionController::class, 'showDetails']);
 
 
     Route::apiResource('zones', ZoneController::class);
-    
+
     // Matches
     Route::apiResource('matches', MatcheController::class);
-    
+
 /*
 |--------------------------------------------------------------------------
 | Team and Player Management Routes
 |--------------------------------------------------------------------------
 */
 // Route::group(['middleware' => 'auth:api'], function () {
-    // Teams
+    // equipes
     Route::apiResource('equipes', EquipeController::class);
-    
+
     // Players
     Route::apiResource('joueurs', JoueurController::class);
-    
+
     // Draw Management
     Route::apiResource('tirages', TirageController::class);
     Route::post('tirages/lancer', [TirageController::class, 'lancerTirage']);
@@ -107,10 +107,10 @@ Route::get('competitions/{id}', [CompetitionController::class, 'showDetails']);
 // Route::group(['middleware' => 'auth:api'], function () {
     // Rankings
     Route::get('rankings', [PointController::class, 'rankings']);
-    Route::get('teams/{equipeId}/points', [PointController::class, 'teamPoints']);
+    Route::get('equipes/{equipeId}/points', [PointController::class, 'teamPoints']);
     Route::get('classement', [ClassementController::class, 'getGlobalRankings']);
     Route::get('classement/equipe/{equipeId}', [ClassementController::class, 'getTeamRank']);
-    
+
     // Statistics
     Route::group(['prefix' => 'statistiques'], function () {
         Route::apiResource('/', StatistiqueController::class)->except('show');
@@ -129,7 +129,7 @@ Route::get('competitions/{id}', [CompetitionController::class, 'showDetails']);
     Route::post('articles/{articleId}/commentaires', [CommentaireController::class, 'store']);
     Route::delete('commentaires/{id}', [CommentaireController::class, 'destroy']);
 
-    
+
     // Categories
     Route::apiResource('categories', CategorieController::class);
 // });
@@ -146,7 +146,7 @@ Route::get('competitions/{id}', [CompetitionController::class, 'showDetails']);
         Route::put('{id}/read', [NotificationController::class, 'markAsRead']);
         Route::put('read-all', [NotificationController::class, 'markAllAsRead']);
     });
-    
+
     // Reclamations
     Route::apiResource('reclamations', ReclamationController::class);
 // });
@@ -160,7 +160,7 @@ Route::get('competitions/{id}', [CompetitionController::class, 'showDetails']);
     // Calendar
     Route::apiResource('calendriers', CalendrierController::class)->except(['show']);
     Route::get('calendriers/matche/{matcheId}', [CalendrierController::class, 'getByMatche']);
-    
+
     // Dashboard
     // Route::get('dashboard', [DashboardController::class, 'index']);
     // Route::get('dashboard/stats', [DashboardController::class, 'getStats']);

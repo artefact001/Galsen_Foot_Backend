@@ -1,160 +1,47 @@
+<?php
 
+namespace App\Http\Controllers;
 
-// namespace App\Http\Controllers;
-
-// use App\Models\Zone;
-// use Illuminate\Http\Request;
-// use Illuminate\Support\Str;
-// use App\Models\User;
-// use Spatie\Permission\Models\Role; // Utilise le modèle de Spatie
-// use App\Notifications\ZoneInscriptionNotification;
-// use Illuminate\Support\Facades\Hash;
-// use App\Http\Requests\ValidationRequest;
+use App\Services\ZoneService;
+use Illuminate\Http\JsonResponse;
 
 class ZoneController extends Controller
 {
+    protected $zoneService;
 
-    //index Zone
-
-    public function index()
+    public function __construct(ZoneService $zoneService)
     {
-        // liste zone
-        $zones = Zone::all();
-        return response()->json([
-            'success' => true,
-            'data' => $zones,
-            'message' => 'success',
-        ], 200);
+        $this->zoneService = $zoneService;
     }
 
+    /**
+     * List all zones.
+     *
+     * @return JsonResponse
+     */
+    public function index(): JsonResponse
+    {
+        try {
+            $zones = $this->zoneService->getAllZones();
+            return response()->json($zones, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la récupération des zones'], 500);
+        }
+    }
 
-    public function store(Request $request)
-   {
-    
-     
-
-       try {
-           // Handle profile picture upload
-           $photo_profile = null;
-           if ($request->hasFile('photo_profile')) {
-               $photo_profile = $request->file('photo_profile')->store('profiles', 'public');
-           }
-
-
-           // Create the user with the password
-        //    $password = $request->nom . Str::random(4); // Example: "prenomXYZ"
-
-           $password = $request->password; // Example: "prenomXYZ"
-
-           $user = User::create([
-               'nom' => $request->nom,
-               'email' => $request->email,
-               'password' => Hash::make($password), // Encrypt the password
-               'role'  => 'zone',
-               'photo_profile' => $photo_profile, // Store the photo path if available
-           ]);
-
-                if ($user) {
-                    Zone::create([
-                    'nom' => $request->nom_zone,
-                    'localite' => $request->localite,
-                    'user_id' => $user->id,
-                    ]);
-                    }
-
-
-
-           // Assign role and promotion if necessary
-        //    $role = Role::firstOrCreate(['name' => 'admin']);
-        //    $user->assignRole($role);
-
-
-
-           // Send email notification
-        //    $user->notify(new ZoneInscriptionNotification($user, $password));
-
-
-           return response()->json([
-               'success' => true,
-               'message' => 'Zone inscrit avec succès et notification envoyée par email',
-               'user' => $user
-           ], 201);
-       } catch (\Exception $e) {
-           return response()->json([
-               'success' => false,
-               'message' => 'Une erreur est survenue : ' . $e->getMessage()
-           ], 500);
-       }
-   }
-
-public function inscrireZone(Request $request)
-   {
-       // Validation des données
-    //    $validator = validator($request->all(), [
-    //        'nom' => ['required', 'string', 'max:255'],
-    //        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        //    'photo_profile' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
-    //    ]);
-
-
-    //    if ($validator->fails()) {
-    //        return response()->json([
-    //            'success' => false,
-    //            'errors' => $validator->errors(),
-    //        ], 422);
-    //    }
-
-
-    //    try {
-           // Handle profile picture upload
-        //    $photo_profile = null;
-        //    if ($request->hasFile('photo_profile')) {
-        //        $photo_profile = $request->file('photo_profile')->store('profiles', 'public');
-        //    }
-
-
-           // Create the user with the password
-        //    $password = $request->nom . Str::random(4); // Example: "prenomXYZ"
-        //    $user = User::create([
-        //        'nom' => $request->nom,
-        //        'email' => $request->email,
-        //        'password' => Hash::make($password), // Encrypt the password
-        //        'role'  => 'admin',
-        //        'photo_profile' => $photo_profile, // Store the photo path if available
-        //    ]);
-
-        //         if ($user) {
-        //             Zone::create([
-        //             'nom' => $request->nom_zone,
-        //             'localite' => $request->localite,
-        //             'user_id' => $request->$user->id,
-        //             ]);
-        //             }
-
-
-
-           // Assign role and promotion if necessary
-        //    $role = Role::firstOrCreate(['name' => 'admin']);
-        //    $user->assignRole($role);
-
-
-
-           // Send email notification
-        //    $user->notify(new ZoneInscriptionNotification($user, $password));
-
-
-           return response()->json([
-               'success' => true,
-               'message' => 'Zone inscrit avec succès et notification envoyée par email',
-               'user' => $user
-           ], 201);
-       } catch (\Exception $e) {
-           return response()->json([
-               'success' => false,
-               'message' => 'Une erreur est survenue : ' . $e->getMessage()
-           ], 500);
-       }
-   }
-
-
+    /**
+     * Display details of a specific zone.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $zone = $this->zoneService->getZoneById($id);
+            return response()->json($zone, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Zone non trouvée'], 404);
+        }
+    }
 }

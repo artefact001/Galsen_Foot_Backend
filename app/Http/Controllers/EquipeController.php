@@ -49,7 +49,6 @@ class equipeController extends Controller
                 'nom' => $equipe->nom,
                 'prenom' => $equipe->prenom,
                 'telephone' => $equipe->telephone,
-                'matricule' => $equipe->matricule,
                 'email' => $equipe->user->email,
                 'user_id' => $equipe->user->id,
             ];
@@ -88,7 +87,6 @@ class equipeController extends Controller
         $equipe = equipe::create([
             'nom' => $request->nom,
             'prenom' => $request->prenom,
-            'matricule' => $matricule,
             'telephone' => $request->telephone,
             'photo' => $request->hasFile('photo') ? $request->photo->store('photos') : null,
             'user_id' => $user->id, // ID de l'utilisateur créé

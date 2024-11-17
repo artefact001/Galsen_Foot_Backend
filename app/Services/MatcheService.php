@@ -72,11 +72,11 @@ class MatcheService
 
     protected function updateStandings(Matche $matche): void
     {
-        $this->updateTeamStanding($matche->equipe1_id, $matche);
-        $this->updateTeamStanding($matche->equipe2_id, $matche);
+        $this->updateequipestanding($matche->equipe1_id, $matche);
+        $this->updateequipestanding($matche->equipe2_id, $matche);
     }
 
-    protected function updateTeamStanding(int $equipeId, Matche $matche): void
+    protected function updateequipestanding(int $equipeId, Matche $matche): void
     {
         $isEquipe1 = $equipeId === $matche->equipe1_id;
         $score = $isEquipe1 ? $matche->score_equipe1 : $matche->score_equipe2;

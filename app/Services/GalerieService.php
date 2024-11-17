@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Galerie;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent;
 use Illuminate\Support\Facades\Storage;
 
 class GalerieService
@@ -13,9 +13,9 @@ class GalerieService
      *
      * @return Collection
      */
-    public function getAll(): Collection
+    public function getAll()
     {
-        return Galerie::all();
+        // return Galerie::all();
     }
 
     /**
@@ -36,12 +36,16 @@ class GalerieService
      * @return Galerie
      */
     public function create(array $data): Galerie
-    {
-        $imagePath = $data['image']->store('galerie_images', 'public');
+{
+    // Ensure the 'image' file is in the correct format before saving
+    if (isset($data['image'])) {
+        $imagePath = $data['image']->store('images');
         $data['image'] = $imagePath;
-        
-        return Galerie::create($data);
     }
+
+    // Create and return the Galerie instance
+    return Galerie::create($data);  // This should return a Galerie instance
+}
 
     /**
      * Update a galerie record by ID with a new image upload if provided.
@@ -57,7 +61,7 @@ class GalerieService
             if (isset($data['image'])) {
                 // Delete the old image if it exists
                 Storage::disk('public')->delete($galerie->image);
-                
+
                 // Store the new image
                 $data['image'] = $data['image']->store('galerie_images', 'public');
             }

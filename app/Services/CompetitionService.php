@@ -11,7 +11,7 @@ class CompetitionService
     {
         try {
             $competition = Competition::findOrFail($competitionId);
-            return $competition->teams()->where('equipe_id', $equipeId)->exists();
+            return $competition->equipes()->where('equipe_id', $equipeId)->exists();
         } catch (\Exception $e) {
             Log::error('Erreur lors de la vérification de l\'inscription de l\'équipe : ' . $e->getMessage());
             return false;
@@ -59,12 +59,57 @@ class CompetitionService
     }
 
 
-
-
-
     // Get all competitions
     public function recupererToutesLesCompetitions(): \Illuminate\Database\Eloquent\Collection
     {
         return Competition::all();
     }
+
+
+
+
+
+
+    // Vérifie si une équipe est inscrite à une compétition
+    // public function estEquipeDansCompetition(int $competitionId, int $equipeId): bool
+    // {
+    //     try {
+    //         $competition = Competition::findOrFail($competitionId);
+    //         return $competition->equipes()->where('equipe_id', $equipeId)->exists();
+    //     } catch (\Exception $e) {
+    //         Log::error('Erreur lors de la vérification de l\'inscription de l\'équipe : ' . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+
+
+    // Ajoute une équipe à une compétition
+    public function ajouterEquipeACompetition(int $competitionId, int $equipeId): bool
+    {
+        try {
+            $competition = Competition::findOrFail($competitionId);
+
+            // Vérifier si l'équipe est déjà inscrite
+            if ($this->estEquipeDansCompetition($competitionId, $equipeId)) {
+                Log::info("L'équipe $equipeId est déjà inscrite à la compétition $competitionId.");
+                return false;
+            }
+
+            // Ajouter l'équipe à la compétition
+            $competition->equipes()->attach($equipeId);
+            Log::info("L'équipe $equipeId a été inscrite à la compétition $competitionId.");
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de l\'inscription de l\'équipe à la compétition : ' . $e->getMessage());
+            throw new \Exception('Erreur lors de l\'inscription de l\'équipe à la compétition.');
+        }
+    }
+
 }
+
+
+
+
+
+

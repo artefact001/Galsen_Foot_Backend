@@ -24,7 +24,7 @@ class equipeController extends Controller
     public function totalequipes()
     {
 
-        // Compter le nombre total de prof 
+        // Compter le nombre total de prof
         $totalEquipe = equipe::count();
 
         // Structurer la réponse en JSON
@@ -81,7 +81,7 @@ class equipeController extends Controller
         // Assigner le rôle "equipe" à l'utilisateur (en supposant que le rôle existe dans la base de données)
         $user->assignRole('equipe');
 
-   
+
 
         // Ajouter le equipe à la table des equipes
         $equipe = equipe::create([
@@ -92,7 +92,10 @@ class equipeController extends Controller
             'user_id' => $user->id, // ID de l'utilisateur créé
         ]);
         // Envoyer un email au equipe
-        Mail::to($request->email)->send(new equipeCreated($equipe, $password));
+        // Mail::to($request->email)->send(new equipeCreated($equipe, $password));
+        Mail::to($user->email)->send(new UserCredentialsMail($user, $request->password));
+
+
 
         return response()->json([
             'message' => 'equipe créé avec succès',

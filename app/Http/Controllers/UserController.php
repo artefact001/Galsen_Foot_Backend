@@ -34,7 +34,7 @@ class UserController extends Controller
         $user->roles()->attach($request->role_id);
 
         // Send email with credentials
-        // Mail::to($user->email)->send(new UserCredentialsMail($user, $request->password));
+        Mail::to($user->email)->send(new UserCredentialsMail($user, $request->password));
 
         return response()->json($user, 201);
     }

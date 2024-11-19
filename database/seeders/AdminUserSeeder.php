@@ -12,7 +12,6 @@ class AdminUserSeeder extends Seeder
     public function run()
     {
         // Créer le rôle admin si il n'existe pas
-        $role = Role::firstOrCreate(['name' => 'admin']);
 
         // Créer l'utilisateur admin
         $user = User::firstOrCreate(
@@ -24,6 +23,5 @@ class AdminUserSeeder extends Seeder
         );
 
         // Attacher le rôle admin à l'utilisateur
-        $user->roles()->sync([$role->id]);
     }
 }

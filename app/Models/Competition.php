@@ -22,6 +22,8 @@ class Competition extends Model
         return $this->belongsToMany(Equipe::class, 'competition_equipe');
     }
 
+
+
     /**
      * Relation un à plusieurs avec le modèle Match.
      *

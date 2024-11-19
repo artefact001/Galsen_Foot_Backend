@@ -25,13 +25,14 @@ class PointController extends Controller
     }
 
     // Afficher les points d'une équipe donnée
-    public function teamPoints($equipeId): JsonResponse
+    public function teamPoints($joueurId): JsonResponse
     {
-        $points = $this->pointService->getTeamPoints($equipeId);
+        $points = $this->pointService->getTeamPoints($joueurId);
 
         return response()->json([
-            'equipe_id' => $equipeId,
+            'joueur_id' => $joueurId,
             'total_points' => $points,
         ]);
     }
 }
+

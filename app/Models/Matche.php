@@ -12,15 +12,17 @@ class Matche extends Model
         'competition_id',
         'equipe1_id',
         'equipe2_id',
+        'date_matche',
+         'lieux',
+        'statut',
+
         'score_equipe1',
         'score_equipe2',
-        'date_matche',
         'buteurs',
         'passeurs',
         'homme_du_matche',
         'cartons',
         'resultat',
-        'statut'
     ];
 
     protected $casts = [
@@ -50,5 +52,12 @@ class Matche extends Model
     public function hommeDuMatch(): BelongsTo
     {
         return $this->belongsTo(Joueur::class, 'homme_du_matche');
+    }
+
+    public function classement(): BelongsTo
+
+    {
+       return $this->belongsTo(classement::class, 'classement_id');
+
     }
 }

@@ -15,9 +15,9 @@ class CreateTiragesTable extends Migration
         Schema::create('tirages', function (Blueprint $table) {
             $table->id();  // Clé primaire auto-incrémentée
             $table->unsignedBigInteger('competition_id');  // Clé étrangère vers la table 'competitions'
-            $table->json('phase');  // JSON représentant les phases de la compétition
-            $table->json('poul');   // JSON représentant les poules de la compétition
+            $table->enum('phase', ['Phase de groupes', 'Quarts de finale', 'Demi-finales', 'Finale']); // Liste explicite des phases            $table->json('poul')->enum;   // JSON représentant les poules de la compétition
             $table->foreign('competition_id')->references('id')->on('competitions')->onDelete('cascade');  // Si la compétition est supprimée, les tirages le sont aussi
+            $table->json('poul')->nullable();
             $table->timestamps();  // Dates de création et de mise à jour
         });
     }

@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CompetitionRequest;
 use App\Models\Competition;
 use App\Services\CompetitionService;
 use Illuminate\Http\JsonResponse;
-// use Illuminate\Http\Request;
 
 class CompetitionController extends Controller
 {
@@ -36,7 +34,12 @@ class CompetitionController extends Controller
      */
     public function store(CompetitionRequest $request): JsonResponse
     {
-        $competition = $this->competitionService->creerCompetition($request->validated());
+
+
+        $competition = $this->competitionService->creerCompetition($request->all());
+
+            // Log::error('Custom error message', ['data' => $request->all()]);
+
         return response()->json($competition, 201);
     }
 
@@ -90,4 +93,67 @@ class CompetitionController extends Controller
             return response()->json(['error' => 'Competition not found'], 404);
         }
     }
+
+
+    /**
+ * Afficher les détails d'une compétition spécifique.
+ *
+ * @param int $id
+ * @return JsonResponse
+ */
+public function showDetails(int $id): JsonResponse
+{
+    try {
+        $competition = $this->competitionService->recupererCompetitionParId($id);
+        return response()->json($competition, 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Compétition non trouvée'], 404);
+    }
+}
+
+
+ public function EquipeParticiper(int $competitionId, int $teamId): JsonResponse
+    {
+        $this->competitionService->participerEquipe($competitionId, $teamId);
+        return response()->json(['message' => 'Equipe inscrite avec successe'], 200);
+    }
+
+
+
+    /**
+     * Vérifier si une équipe est inscrite à une compétition.
+     *
+     * @param int $competitionId
+     * @param int $teamId
+     * @return JsonResponse
+     */
+    public function isEquipeInCompetition(int $competitionId, int $teamId): JsonResponse
+    {
+        $isInCompetition = $this->competitionService->estEquipeDansCompetition($competitionId, $teamId);
+
+        if ($isInCompetition) {
+            return response()->json(['isInCompetition' => true], 200);
+        } else {
+            return response()->json(['isInCompetition' => false], 200);
+        }
+    }
+
+   //ajouter un equipe dans une competition pour avoir la liste des equipe qui participent a cette competition
+
+
+ public function ajouterEquipeACompetition()
+ {
+     $competitionService = new CompetitionService();
+
+     try {
+         $result = $competitionService->ajouterEquipeACompetition(1, 10); // Compétition ID: 1, Équipe ID: 10
+         if ($result) {
+             echo "L'équipe a été inscrite avec succès.";
+         } else {
+             echo "L'équipe est déjà inscrite.";
+         }
+     } catch (\Exception $e) {
+         echo "Erreur : " . $e->getMessage();
+     }
+ }
 }

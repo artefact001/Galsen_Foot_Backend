@@ -18,7 +18,7 @@ public function up()
         $table->string('titre');
         $table->text('contenu');
         $table->unsignedBigInteger('user_id'); // Référence à l'utilisateur (auteur du commentaire)
-        $table->unsignedBigInteger('zone_id'); // Référence à la Zone
+        $table->unsignedBigInteger('zone_id')->nullable()->change();
         $table->string('file_path'); // Nouveau champ pour le chemin du fichier
         $table->timestamps();
 

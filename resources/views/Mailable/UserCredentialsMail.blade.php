@@ -56,7 +56,7 @@
             <p><strong>Email:</strong> {{ $user->email }}</p>
             <p><strong>Password:</strong> {{ $password }}</p>
             <p>Please keep these credentials safe.</p>
-            <a href="{{ url('/login') }}" class="button">Login Now</a>
+            <a href="{{ url('/connexion') }}" class="button">Login Now</a>
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} Your Company Name. All rights reserved.</p>

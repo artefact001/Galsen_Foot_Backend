@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Equipe;
 use App\Models\Matche;
+use App\Models\Equipe;
 use App\Models\Competition;
 use Carbon\Carbon;
 
@@ -15,44 +15,51 @@ class MatcheSeeder extends Seeder
      */
     public function run()
     {
-        // Ensure that a competition exists
+        // Récupérer la compétition existante ou en créer une
         $competition = Competition::firstOrCreate([
             'nom' => 'Compétition Test',
             'date_debut' => Carbon::now()->subWeeks(2),
             'date_fin' => Carbon::now()->addWeeks(2),
+            'lieux' => 'Stade National',
         ]);
 
-        // Fetch teams from zone 1
+        // Récupérer les équipes de la zone 1
         $equipes = Equipe::where('zone_id', 1)->get();
 
-        // Create matches between teams in this zone
-        foreach ($equipes->chunk(2) as $chunk) {
-            if ($chunk->count() == 2) { // Ensure we have two teams for a match
-                $scoreEquipe1 = rand(0, 5);
-                $scoreEquipe2 = rand(0, 5);
+        // Créer 20 matchs
+        for ($i = 0; $i < 20; $i++) {
+            // Choisir deux équipes différentes aléatoirement
+            $equipesSelectionnees = $equipes->random(2);
+            $equipe1 = $equipesSelectionnees[0];
+            $equipe2 = $equipesSelectionnees[1];
 
-                // Determine the match result
-                $resultat = $scoreEquipe1 > $scoreEquipe2 ? 'gagne' : ($scoreEquipe1 < $scoreEquipe2 ? 'perdu' : 'nul');
+            // Générer des scores aléatoires
+            $scoreEquipe1 = rand(0, 5);
+            $scoreEquipe2 = rand(0, 5);
 
-                // Set match status based on match date
-                $matchDate = Carbon::now()->subDays(rand(1, 10));
-                $statut = $matchDate < Carbon::now() ? 'termine' : 'en cours';
+            // Déterminer le résultat du match
+            $resultat = $scoreEquipe1 > $scoreEquipe2 ? 'gagne' : ($scoreEquipe1 < $scoreEquipe2 ? 'perdu' : 'nul');
 
-                Matche::create([
-                    'competition_id' => $competition->id,
-                    'equipe1_id' => $chunk[0]->id,
-                    'equipe2_id' => $chunk[1]->id,
-                    'score_equipe1' => $scoreEquipe1,
-                    'score_equipe2' => $scoreEquipe2,
-                    'date_matche' => $matchDate,
-                    'statut' => $statut,
-                    'buteurs' => json_encode([]), // Update with actual scorers if necessary
-                    'passeurs' => json_encode([]), // Update with actual assisters if necessary
-                    'homme_du_matche' => null,
-                    'cartons' => json_encode([]),
-                    'resultat' => $resultat,
-                ]);
-            }
+            // Définir le statut et la date du match
+            $dateMatch = Carbon::now()->subDays(rand(1, 30));
+            $statut = $dateMatch < Carbon::now() ? 'termine' : 'en_attente';
+
+            // Créer le match
+            Matche::create([
+                'competition_id' => $competition->id,
+                'equipe1_id' => $equipe1->id,
+                'equipe2_id' => $equipe2->id,
+                'score_equipe1' => $scoreEquipe1,
+                'score_equipe2' => $scoreEquipe2,
+                'date_matche' => $dateMatch,
+                'lieux' => 'Stade Local',
+                'statut' => $statut,
+                'buteurs' => json_encode([]), // Ajouter des buteurs si nécessaire
+                'passeurs' => json_encode([]), // Ajouter des passeurs si nécessaire
+                'homme_du_matche' => null,
+                'cartons' => json_encode([]),
+                'resultat' => $resultat,
+            ]);
         }
     }
 }

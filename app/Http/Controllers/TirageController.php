@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 class TirageController extends Controller
 {
+
     protected $tirageService;
 
     public function __construct(TirageService $tirageService)
@@ -48,26 +49,34 @@ class TirageController extends Controller
 
         return response()->json($tirage);
     }
+/**
+ * Lancer un tirage de poules.
+ *
+ * @param TirageRequest $request
+ * @return JsonResponse
+ */
+public function lancerTirage(TirageRequest $request): JsonResponse
+{
+    // Récupérer les équipes de la compétition dans la zone sélectionnée
+    $equipes = Equipe::where('zone_id', $request->zone_id)->pluck('id')->toArray();
 
-    /**
-     * Lancer un tirage de poules.
-     *
-     * @param TirageRequest $request
-     * @return JsonResponse
-     */
-    public function lancerTirage(TirageRequest $request): JsonResponse
-    {
-        $equipes = Equipe::where('competition_id', $request->competition_id)->pluck('id')->toArray();
-
-        $poules = $this->tirageService->genererPoules($request->nombre_poules, $equipes);
-
-        $tirage = $this->tirageService->creerTirage([
-            'phase' => $request->phase,
-            'competition_id' => $request->competition_id,
-            'poules' => json_encode($poules),
-            'nombre_poules' => $request->nombre_poules,
-        ]);
-
-        return response()->json($tirage, 201);
+    // Vérifier s'il y a des équipes dans la zone
+    if (empty($equipes)) {
+        return response()->json(['message' => 'Aucune équipe trouvée dans cette zone.'], 404);
     }
+
+    // Générer les poules
+    $poules = $this->tirageService->genererPoules($request->nombre_poules, $equipes);
+
+    // Créer le tirage avec les poules générées
+    $tirage = $this->tirageService->creerTirage([
+        'phase' => $request->phase,
+        'competition_id' => $request->competition_id,
+        'poules' => json_encode($poules),
+    ]);
+
+    return response()->json($tirage, 201);
 }
+
+
+   }

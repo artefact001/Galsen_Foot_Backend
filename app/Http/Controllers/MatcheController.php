@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MatcheRequest;
@@ -16,24 +15,28 @@ class MatcheController extends Controller
         $this->matcheService = $matcheService;
     }
 
+    // Récupérer tous les matchs
     public function index(): JsonResponse
     {
         $matches = $this->matcheService->getAllMatches();
         return response()->json($matches);
     }
 
+    // Créer un nouveau match
     public function store(MatcheRequest $request): JsonResponse
     {
         $matche = $this->matcheService->createMatche($request->all());
         return response()->json($matche, 201);
     }
 
+    // Récupérer un match par son ID
     public function show(int $id): JsonResponse
     {
         $matche = $this->matcheService->getMatchById($id);
         return response()->json($matche);
     }
 
+    // Mettre à jour un match
     public function update(MatcheRequest $request, int $id): JsonResponse
     {
         $matche = $this->matcheService->getMatchById($id);
@@ -41,6 +44,7 @@ class MatcheController extends Controller
         return response()->json($updatedMatche);
     }
 
+    // Supprimer un match
     public function destroy(int $id): JsonResponse
     {
         $matche = $this->matcheService->getMatchById($id);

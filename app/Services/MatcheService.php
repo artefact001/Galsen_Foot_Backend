@@ -1,9 +1,11 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\Matche;
 use App\Models\Classement;
+use App\Models\Competition;
+use App\Models\Equipe;
+use App\Models\Joueur;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -16,24 +18,27 @@ class MatcheService
         $this->notificationService = $notificationService;
     }
 
+    // Récupérer tous les matchs
     public function getAllMatches(): Collection
     {
         return Matche::with(['equipe1', 'equipe2', 'competition'])->get();
     }
 
+    // Récupérer un match par son ID
     public function getMatchById(int $id): Matche
     {
         return Matche::with(['equipe1', 'equipe2', 'competition', 'hommeDuMatch'])->findOrFail($id);
     }
 
+    // Créer un match
     public function createMatche(array $data): Matche
     {
         return DB::transaction(function () use ($data) {
-            // $data['statut'] = $data['statut'] ?? 'en_attente';
             return Matche::create($data);
         });
     }
 
+    // Mettre à jour un match
     public function updateMatche(Matche $matche, array $data): Matche
     {
         return DB::transaction(function () use ($matche, $data) {
@@ -46,36 +51,37 @@ class MatcheService
         });
     }
 
+    // Terminer un match et mettre à jour les classements
     protected function terminerMatche(Matche $matche, array $data): Matche
     {
-        // Update match data
+        // Mise à jour des informations du match
         $matche->update([
             'score_equipe1' => $data['score_equipe1'],
             'score_equipe2' => $data['score_equipe2'],
-            'equipe1_is_winner' => $data['equipe1_is_winner'],
-            'equipe2_is_winner' => $data['equipe2_is_winner'],
             'buteurs' => $data['buteurs'] ?? [],
             'passeurs' => $data['passeurs'] ?? [],
             'cartons' => $data['cartons'] ?? [],
             'homme_du_matche' => $data['homme_du_matche'] ?? null,
-            'statut' => 'termine'
+            'statut' => 'termine',
         ]);
 
-        // Update standings
+        // Mise à jour des classements des équipes
         $this->updateStandings($matche);
 
-        // Send notifications
+        // Notification des résultats
         $this->notificationService->notifyMatchResult($matche);
 
         return $matche->fresh(['equipe1', 'equipe2', 'competition', 'hommeDuMatch']);
     }
 
+    // Mettre à jour les classements des équipes après chaque match
     protected function updateStandings(Matche $matche): void
     {
         $this->updateTeamStanding($matche->equipe1_id, $matche);
         $this->updateTeamStanding($matche->equipe2_id, $matche);
     }
 
+    // Mettre à jour le classement d'une équipe
     protected function updateTeamStanding(int $equipeId, Matche $matche): void
     {
         $isEquipe1 = $equipeId === $matche->equipe1_id;
@@ -115,6 +121,7 @@ class MatcheService
         $classement->save();
     }
 
+    // Supprimer un match
     public function deleteMatche(Matche $matche): bool
     {
         return DB::transaction(function () use ($matche) {

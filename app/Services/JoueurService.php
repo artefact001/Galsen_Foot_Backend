@@ -18,7 +18,7 @@ class JoueurService
 
     public function recupererJoueurParId(int $id)
     {
-        return Joueur::findOrFail($id);
+        return Joueur::with('equipe','categorie')->findOrFail($id);
     }
 
     public function mettreAJourJoueur(Joueur $joueur, array $data)

@@ -36,6 +36,10 @@ class MatcheController extends Controller
         return response()->json($matche);
     }
 
+    // filtrer par date
+
+
+
     // Mettre à jour un match
     public function update(MatcheRequest $request, int $id): JsonResponse
     {
